@@ -66,7 +66,6 @@ if st.session_state.page == "shop":
         if st.button("🛒 إتمام الطلب", use_container_width=True):
             st.session_state.page = "checkout"
             st.rerun()
-
 # --- واجهة تأكيد الطلب ---
 elif st.session_state.page == "checkout":
     st.title("📄 تأكيد الطلب")
@@ -82,7 +81,10 @@ elif st.session_state.page == "checkout":
             address = st.text_input("عنوان المنزل بالتفصيل")
             total += 10000
             
-        if st.form_submit_button("تأكيد الطلب النهائي"):
+        # الزر يجب أن يكون "form_submit_button" وليس "st.button" داخل الفورم
+        submitted = st.form_submit_button("تأكيد الطلب النهائي")
+        
+        if submitted:
             msg = f"🔔 طلب جديد:\nالاسم: {name}\nالهاتف: {phone}\nالولاية: {wilaya}\nالعنوان: {address}\nالكتب: {st.session_state.cart}\nالمجموع: {total} دج"
             try: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg})
             except: pass
@@ -90,16 +92,28 @@ elif st.session_state.page == "checkout":
             st.balloons()
             st.success("تم تأكيد طلبك!")
             st.markdown("---")
-            st.markdown("### 📄 فاتورة الطلب الخاصة بك:")
+            st.markdown("### 📄 فاتورة الطلب:")
             st.markdown(f"**👤 الاسم:** {name}")
             st.markdown(f"**📞 الهاتف:** {phone}")
             st.markdown(f"**📍 الولاية:** {wilaya}")
             if address: st.markdown(f"**🏠 العنوان:** {address}")
-            st.markdown("---")
             st.markdown(f"**💰 المبلغ الإجمالي:** {total} دج")
-            st.markdown("---")
-            
             st.session_state.cart = {}
-            if st.button("العودة للمتجر"):
-                st.session_state.page = "shop"
-                st.rerun()
+
+    # الزر هنا خارج الـ form وسيعمل بشكل طبيعي
+    if st.button("العودة للمتجر"):
+        st.session_state.page = "shop"
+        st.rerun()
+# --- واجهة المتجر (بعد التعديل) ---
+    for p, info in st.session_state.data['products'].items():
+        col1, col2 = st.columns([1, 2])
+        with col1:
+            # هنا جعلنا الصورة داخل "موسع" لتبدو صغيرة، وعند الضغط عليها تكبر
+            with st.expander("🔍 اضغط للتكبير"):
+                st.image(info['img'], use_column_width=True)
+        with col2:
+            st.write(f"### {p}")
+            st.write(f"السعر: {info['price']} دج")
+            if st.button(f"أضف {p} للسلة 🛒", key=f"add_{p}"):
+                st.session_state.cart[p] = st.session_state.cart.get(p, 0) + 1
+                st.toast(f"تمت إضافة {p}")
