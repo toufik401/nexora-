@@ -6,8 +6,8 @@ import requests
 # --- إعدادات النظام ---
 DATA_FILE = "store_data.json"
 # ضع بيانات بوت التلغرام الخاص بك هنا
-BOT_TOKEN = "YOUR_BOT_TOKEN"
-CHAT_ID = "YOUR_CHAT_ID"
+BOT_TOKEN = "8640762406:AAF540rnfipL54HSUIRZqODSsBcQjM2uybo"
+CHAT_ID = "7055252264"
 
 if not os.path.exists("saved_images"): os.makedirs("saved_images")
 
@@ -33,7 +33,7 @@ if 'page' not in st.session_state: st.session_state.page = "shop"
 # --- لوحة التحكم (الأدمن) ---
 with st.sidebar:
     st.header("⚙️ لوحة التحكم")
-    if st.text_input("كلمة السر", type="password") == "admin":
+    if st.text_input("كلمة السر", type="password") == "admin77":
         for p, info in st.session_state.data['products'].items():
             st.subheader(p)
             info['price'] = st.number_input(f"سعر {p}", value=info['price'], key=f"price_{p}")
