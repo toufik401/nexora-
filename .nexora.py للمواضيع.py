@@ -22,19 +22,6 @@ def load_data():
         "فيزياء": {"price": 750, "img": "https://via.placeholder.com/150"},
         "إسلامية": {"price": 400, "img": "https://via.placeholder.com/150"}
     }}
-# --- واجهة المتجر (بعد التعديل) ---
-    for p, info in st.session_state.data['products'].items():
-        col1, col2 = st.columns([1, 2])
-        with col1:
-            # هنا جعلنا الصورة داخل "موسع" لتبدو صغيرة، وعند الضغط عليها تكبر
-            with st.expander("🔍 اضغط للتكبير"):
-                st.image(info['img'], use_column_width=True)
-        with col2:
-            st.write(f"### {p}")
-            st.write(f"السعر: {info['price']} دج")
-            if st.button(f"أضف {p} للسلة 🛒", key=f"add_{p}"):
-                st.session_state.cart[p] = st.session_state.cart.get(p, 0) + 1
-                st.toast(f"تمت إضافة {p}")
 
 def save_data(data):
     with open(DATA_FILE, "w") as f: json.dump(data, f)
