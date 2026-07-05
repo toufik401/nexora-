@@ -54,9 +54,9 @@ if st.session_state.page == "shop":
     for p, info in st.session_state.data['products'].items():
         col1, col2 = st.columns([1, 2])
         with col1: 
-            # التعديل هنا: إضافة الـ Expander لتكبير الصورة
-            with st.expander("🔍 اضغط هنا لرؤية الغلاف"):
-                st.image(info['img'], use_column_width=True)
+            # هذه الطريقة تجعل الصورة واضحة دائماً، 
+            # وعند الضغط عليها تفتح في نافذة جديدة (Fullscreen)
+            st.image(info['img'], use_column_width=True)
         with col2:
             st.write(f"### {p}")
             st.write(f"السعر: {info['price']} دج")
