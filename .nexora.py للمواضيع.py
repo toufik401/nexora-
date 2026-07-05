@@ -5,7 +5,6 @@ import requests
 
 # --- إعدادات النظام ---
 DATA_FILE = "store_data.json"
-# ضع بيانات بوت التلغرام الخاص بك هنا
 BOT_TOKEN = "8640762406:AAF540rnfipL54HSUIRZqODSsBcQjM2uybo"
 CHAT_ID = "7055252264"
 
@@ -54,7 +53,10 @@ if st.session_state.page == "shop":
     
     for p, info in st.session_state.data['products'].items():
         col1, col2 = st.columns([1, 2])
-        with col1: st.image(info['img'], width=120)
+        with col1: 
+            # التعديل هنا: إضافة الـ Expander لتكبير الصورة
+            with st.expander("🔍 اضغط هنا لرؤية الغلاف"):
+                st.image(info['img'], use_column_width=True)
         with col2:
             st.write(f"### {p}")
             st.write(f"السعر: {info['price']} دج")
@@ -66,6 +68,7 @@ if st.session_state.page == "shop":
         if st.button("🛒 إتمام الطلب", use_container_width=True):
             st.session_state.page = "checkout"
             st.rerun()
+
 # --- واجهة تأكيد الطلب ---
 elif st.session_state.page == "checkout":
     st.title("📄 تأكيد الطلب")
@@ -81,7 +84,6 @@ elif st.session_state.page == "checkout":
             address = st.text_input("عنوان المنزل بالتفصيل")
             total += 10000
             
-        # الزر يجب أن يكون "form_submit_button" وليس "st.button" داخل الفورم
         submitted = st.form_submit_button("تأكيد الطلب النهائي")
         
         if submitted:
@@ -100,7 +102,6 @@ elif st.session_state.page == "checkout":
             st.markdown(f"**💰 المبلغ الإجمالي:** {total} دج")
             st.session_state.cart = {}
 
-    # الزر هنا خارج الـ form وسيعمل بشكل طبيعي
     if st.button("العودة للمتجر"):
         st.session_state.page = "shop"
         st.rerun()
