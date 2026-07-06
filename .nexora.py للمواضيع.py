@@ -98,7 +98,7 @@ elif st.session_state.page == "checkout":
         address = ""
         if "توصيل" in delivery:
             address = st.text_input("عنوان المنزل بالتفصيل")
-            total += 100 دج 
+            total += 100دج 
 
         submitted = st.form_submit_button("تأكيد الطلب النهائي")
         
