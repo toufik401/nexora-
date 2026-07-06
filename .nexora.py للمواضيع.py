@@ -13,13 +13,10 @@ if not os.path.exists("saved_images"): os.makedirs("saved_images")
 def load_data():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, "r") as f: return json.load(f)
+    # الهيكل الجديد للبيانات يدعم السعر القديم وحالة التوفر
     return {"products": {
-        "علوم 1": {"price": 500, "img": "https://via.placeholder.com/150"},
-        "علوم 2": {"price": 600, "img": "https://via.placeholder.com/150"},
-        "علوم 3": {"price": 550, "img": "https://via.placeholder.com/150"},
-        "رياضيات": {"price": 800, "img": "https://via.placeholder.com/150"},
-        "فيزياء": {"price": 750, "img": "https://via.placeholder.com/150"},
-        "إسلامية": {"price": 400, "img": "https://via.placeholder.com/150"}
+        "علوم 1": {"price": 500, "old_price": 700, "available": True, "img": "https://via.placeholder.com/150"},
+        "رياضيات": {"price": 800, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"}
     }}
 
 def save_data(data):
@@ -29,14 +26,17 @@ if 'data' not in st.session_state: st.session_state.data = load_data()
 if 'cart' not in st.session_state: st.session_state.cart = {}
 if 'page' not in st.session_state: st.session_state.page = "shop"
 
-# --- لوحة التحكم (الأدمن) ---
+# --- لوحة التحكم ---
 with st.sidebar:
     st.header("⚙️ لوحة التحكم")
     if st.text_input("كلمة السر", type="password") == "admin77":
         for p, info in st.session_state.data['products'].items():
             st.subheader(p)
-            info['price'] = st.number_input(f"سعر {p}", value=info['price'], key=f"price_{p}")
-            uploaded_file = st.file_uploader(f"اختر صورة لـ {p}", type=["jpg", "png"], key=f"file_{p}")
+            info['price'] = st.number_input(f"السعر الحالي {p}", value=info['price'], key=f"p_{p}")
+            info['old_price'] = st.number_input(f"السعر القديم (0 للإلغاء)", value=info.get('old_price', 0), key=f"o_{p}")
+            info['available'] = st.checkbox(f"متوفر", value=info.get('available', True), key=f"a_{p}")
+            
+            uploaded_file = st.file_uploader(f"تغيير صورة {p}", type=["jpg", "png"], key=f"file_{p}")
             if uploaded_file:
                 file_path = os.path.join("saved_images", f"{p}.jpg")
                 with open(file_path, "wb") as f: f.write(uploaded_file.getbuffer())
@@ -49,20 +49,34 @@ with st.sidebar:
 # --- واجهة المتجر ---
 if st.session_state.page == "shop":
     st.markdown("<h1 style='text-align: center;'>Nexora | دليلك نحو التميز</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center;'>معاً نحو العلامة الكاملة</h3>", unsafe_allow_html=True)
     
-    for p, info in st.session_state.data['products'].items():
-        col1, col2 = st.columns([1, 2])
-        with col1: 
-            # هذه الطريقة تجعل الصورة واضحة دائماً، 
-            # وعند الضغط عليها تفتح في نافذة جديدة (Fullscreen)
-            st.image(info['img'], use_column_width=True)
-        with col2:
-            st.write(f"### {p}")
-            st.write(f"السعر: {info['price']} دج")
-            if st.button(f"أضف للسلة", key=f"add_{p}"):
-                st.session_state.cart[p] = st.session_state.cart.get(p, 0) + 1
-                st.toast(f"تمت إضافة {p}")
+    products = list(st.session_state.data['products'].items())
+    for i in range(0, len(products), 2):
+        cols = st.columns(2)
+        for j in range(2):
+            if i + j < len(products):
+                p, info = products[i+j]
+                with cols[j]:
+                    st.image(info['img'], use_column_width=True)
+                    
+                    # منطق عرض السعر (مشطوب أو عادي)
+                    price_display = f"**{info['price']} دج**"
+                    if info.get('old_price', 0) > 0:
+                        price_display = f"~~{info['old_price']} دج~~ <span style='color:red;'>{info['price']} دج</span>"
+                    
+                    st.markdown(f"""
+                    <div style="text-align: center;">
+                        <h3>{p}</h3>
+                        <p style="font-size: 18px;">{price_display}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    if info.get('available', True):
+                        if st.button(f"🛒 اشتري الآن", key=f"add_{p}", use_container_width=True):
+                            st.session_state.cart[p] = st.session_state.cart.get(p, 0) + 1
+                            st.toast(f"تمت إضافة {p} للسلة")
+                    else:
+                        st.warning("غير متوفر حالياً")
     
     if st.session_state.cart:
         if st.button("🛒 إتمام الطلب", use_container_width=True):
@@ -93,13 +107,8 @@ elif st.session_state.page == "checkout":
             
             st.balloons()
             st.success("تم تأكيد طلبك!")
-            st.markdown("---")
-            st.markdown("### 📄 فاتورة الطلب:")
-            st.markdown(f"**👤 الاسم:** {name}")
-            st.markdown(f"**📞 الهاتف:** {phone}")
-            st.markdown(f"**📍 الولاية:** {wilaya}")
-            if address: st.markdown(f"**🏠 العنوان:** {address}")
-            st.markdown(f"**💰 المبلغ الإجمالي:** {total} دج")
+            st.markdown("### 📄 الفاتورة:")
+            st.write(f"الاسم: {name} | الهاتف: {phone} | المجموع: {total} دج")
             st.session_state.cart = {}
 
     if st.button("العودة للمتجر"):
