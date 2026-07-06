@@ -94,12 +94,12 @@ elif st.session_state.page == "checkout":
         name = st.text_input("الاسم ")
         phone = st.text_input("رقم الهاتف")
         wilaya = st.selectbox("الولاية", ["أفلّو" ])
-        delivery = st.radio("طريقة الاستلام", ["استلام فردي (0 دج)", "توصيل إلى باب المنزل (10,000 دج)"])
+        delivery = st.radio("طريقة الاستلام", ["استلام فردي (0 دج)", "توصيل إلى باب المنزل (100 دج)"])
         address = ""
         if "توصيل" in delivery:
             address = st.text_input("عنوان المنزل بالتفصيل")
-            total += 10000
-            
+            total += 100 دج 
+
         submitted = st.form_submit_button("تأكيد الطلب النهائي")
         
         if submitted:
