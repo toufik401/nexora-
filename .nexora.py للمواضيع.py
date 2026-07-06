@@ -89,7 +89,36 @@ if st.session_state.page == "shop":
 # --- واجهة تأكيد الطلب ---
 elif st.session_state.page == "checkout":
     st.title("📄 تأكيد الطلب")
-    # ... (باقي الكود الخاص بالتأكيد يبقى كما هو)
+  total = sum(st.session_state.data['products'][p]['price'] * q for p, q in st.session_state.cart.items())
+    
+    with st.form("order_form"):
+        name = st.text_input("الاسم ")
+        phone = st.text_input("رقم الهاتف")
+        wilaya = st.selectbox("الولاية", ["أفلّو" ])
+        delivery = st.radio("طريقة الاستلام", ["استلام فردي (0 دج)", "توصيل إلى باب المنزل (10,000 دج)"])
+        address = ""
+        if "توصيل" in delivery:
+            address = st.text_input("عنوان المنزل بالتفصيل")
+            total += 10000
+            
+        submitted = st.form_submit_button("تأكيد الطلب النهائي")
+        
+        if submitted:
+            msg = f"🔔 طلب جديد:\nالاسم: {name}\nالهاتف: {phone}\nالولاية: {wilaya}\nالعنوان: {address}\nالكتب: {st.session_state.cart}\nالمجموع: {total} دج"
+            try: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg})
+            except: pass
+            
+            st.balloons()
+            st.success("تم تأكيد طلبك!")
+            st.markdown("---")
+            st.markdown("### 📄 فاتورة الطلب:")
+            st.markdown(f"**👤 الاسم:** {name}")
+            st.markdown(f"**📞 الهاتف:** {phone}")
+            st.markdown(f"**📍 الولاية:** {wilaya}")
+            if address: st.markdown(f"**🏠 العنوان:** {address}")
+            st.markdown(f"**💰 المبلغ الإجمالي:** {total} دج")
+            st.session_state.cart = {}
+
     if st.button("العودة للمتجر"):
         st.session_state.page = "shop"
         st.rerun()
