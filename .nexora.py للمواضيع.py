@@ -97,11 +97,9 @@ elif st.session_state.page == "checkout":
         delivery = st.radio("طريقة الاستلام", ["استلام فردي (0 دج)", "توصيل إلى باب المنزل (100 دج)"])
         address = ""
         if "توصيل" in delivery:
-            address = st.text_input("عنوان المنزل بالتفصيل")
+            address = st.text_input("عنوان المنزل بالتفصيل *")
             total += 100 
-
         submitted = st.form_submit_button("تأكيد الطلب النهائي")
-        
         if submitted:
             msg = f"🔔 طلب جديد:\nالاسم: {name}\nالهاتف: {phone}\nالولاية: {wilaya}\nالعنوان: {address}\nالكتب: {st.session_state.cart}\nالمجموع: {total} دج"
             try: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg})
