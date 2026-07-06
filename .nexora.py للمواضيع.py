@@ -97,7 +97,7 @@ elif st.session_state.page == "checkout":
         delivery = st.radio("طريقة الاستلام", ["استلام فردي (0 دج)", "توصيل إلى باب المنزل (100 دج)"])
         address = ""
         if "توصيل" in delivery:
-            address = st.text_input("عنوان المنزل بالتفصيل *")
+            address = st.text_input(" عنوان المنزل بالتفصيل في حال توصيل للمنزل *")
             total += 100 
         submitted = st.form_submit_button("تأكيد الطلب النهائي")
         if submitted:
