@@ -88,8 +88,8 @@ if st.session_state.page == "shop":
 
 # --- واجهة تأكيد الطلب ---
 elif st.session_state.page == "checkout":
- st.title("📄 تأكيد الطلب")
- total = sum(st.session_state.data['products'][p]['price'] * q for p, q in st.session_state.cart.items())
+    st.title("📄 تأكيد الطلب")
+    total = sum(st.session_state.data['products'][p]['price'] * q for p, q in st.session_state.cart.items())
     with st.form("order_form"):
         name = st.text_input("الاسم ")
         phone = st.text_input("رقم الهاتف")
