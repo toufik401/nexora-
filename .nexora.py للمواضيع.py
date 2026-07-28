@@ -27,37 +27,37 @@ def load_data():
     return {
         "products": {
             "علوم 1": {
-                "price": 500,
-                "old_price": 700,
+                "price": 00,
+                "old_price": 00,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
             },
             "علوم 2": {
-                "price": 600,
+                "price": 00,
                 "old_price": 0,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
             },
             "علوم 3": {
-                "price": 550,
+                "price": 0,
                 "old_price": 0,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
             },
             "رياضيات": {
-                "price": 800,
-                "old_price": 950,
+                "price": 00,
+                "old_price": 0,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
             },
             "فيزياء": {
-                "price": 750,
+                "price": 0,
                 "old_price": 0,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
             },
             "إسلامية": {
-                "price": 400,
+                "price": 0,
                 "old_price": 0,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
