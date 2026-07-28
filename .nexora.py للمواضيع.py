@@ -3,23 +3,26 @@ import os
 import requests
 import streamlit as st
 
-# --- إعدادات الصفحة وإخفاء شعارات Streamlit ---
+# --- 1. إعدادات الصفحة وإخفاء شعارات Streamlit مع ترك الـ Sidebar شغال ---
 st.set_page_config(
     page_title="Nexora | دليلك نحو التميز", page_icon="🛒", layout="wide"
 )
 
 hide_streamlit_style = """
             <style>
-            #MainMenu {visibility: hidden;}
+            /* إخفاء التذييل والشعارات والـ Deploy */
             footer {visibility: hidden;}
-            header {visibility: hidden;}
-            div[data-testid="stToolbar"] {visibility: hidden !important;}
-            div[data-testid="stDecoration"] {visibility: hidden !important;}
+            #MainMenu {visibility: hidden;}
+            div[data-testid="stDecoration"] {display:none;}
+            .stDeployButton {display:none;}
+            
+            /* إظهار زر فتح الـ Sidebar بوضوح */
+            [data-testid="stSidebarNav"] {display: block;}
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# --- إعدادات النظام ---
+# --- 2. إعدادات النظام وتدفق البيانات ---
 DATA_FILE = "store_data.json"
 BOT_TOKEN = "8640762406:AAF540rnfipL54HSUIRZqODSsBcQjM2uybo"
 CHAT_ID = "7055252264"
@@ -53,8 +56,8 @@ def load_data():
                 "img": "https://via.placeholder.com/150",
             },
             "رياضيات": {
-                "price": 00,
-                "old_price":0,
+                "price": 800,
+                "old_price": 950,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
             },
@@ -86,12 +89,11 @@ if "cart" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "shop"
 
-# --- لوحة التحكم المشفرة ---
+# --- 3. لوحة التحكم المشفرة (تظهر في القائمة الجانبية) ---
 with st.sidebar:
     st.header("🔐 دخول الأدمن")
     admin_password = st.text_input("كلمة السر", type="password")
 
-    # لن تظهر خيارات لوحة التحكم إلا إذا كانت كلمة السر صحيحة
     if admin_password == "admin77":
         st.success("تم الدخول بنجاح!")
         st.markdown("---")
@@ -126,7 +128,7 @@ with st.sidebar:
             st.success("تم التحديث!")
             st.rerun()
 
-# --- واجهة المتجر ---
+# --- 4. واجهة المتجر الرئيسية ---
 if st.session_state.page == "shop":
     st.markdown(
         "<h1 style='text-align: center;'>Nexora | دليلك نحو التميز</h1>",
@@ -174,7 +176,7 @@ if st.session_state.page == "shop":
             st.session_state.page = "checkout"
             st.rerun()
 
-# --- واجهة تأكيد الطلب ---
+# --- 5. واجهة تأكيد الطلب ---
 elif st.session_state.page == "checkout":
     st.title("📄 تأكيد الطلب")
     total = sum(
@@ -204,7 +206,7 @@ elif st.session_state.page == "checkout":
             try:
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                    data={"chat_id":7055252264 , "text": msg},
+                    data={"chat_id": CHAT_ID, "text": msg},
                 )
             except Exception:
                 pass
