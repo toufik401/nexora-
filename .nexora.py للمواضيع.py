@@ -3,21 +3,34 @@ import os
 import requests
 import streamlit as st
 
-# --- 1. إعدادات الصفحة وإخفاء شعارات Streamlit مع ترك الـ Sidebar شغال ---
+# --- 1. إعدادات الصفحة وإخفاء عناصر Streamlit مع الإبقاء على السهم فقط ---
 st.set_page_config(
     page_title="Nexora | دليلك نحو التميز", page_icon="🛒", layout="wide"
 )
 
 hide_streamlit_style = """
             <style>
-            /* إخفاء التذييل والشعارات والـ Deploy */
-            footer {visibility: hidden;}
-            #MainMenu {visibility: hidden;}
-            div[data-testid="stDecoration"] {display:none;}
-            .stDeployButton {display:none;}
+            /* إخفاء الهيدر بالكامل ولكن إبقاء زر السهم فقط */
+            header[data-testid="stHeader"] {
+                background: transparent !important;
+            }
             
-            /* إظهار زر فتح الـ Sidebar بوضوح */
-            [data-testid="stSidebarNav"] {display: block;}
+            /* إخفاء عناصر الهيدر المزعجة (أزرار التشارك، النقاط الثلاث، إلخ) */
+            div[data-testid="stToolbar"] {visibility: hidden !important;}
+            div[data-testid="stDecoration"] {display: none !important;}
+            div[data-testid="stStatusWidget"] {display: none !important;}
+            .stDeployButton {display: none !important;}
+            #MainMenu {visibility: hidden !important;}
+            
+            /* إخفاء الشريط السفلي (Footer) وحقوق Streamlit */
+            footer {visibility: hidden !important;}
+            
+            /* التأكيد على إظهار سهم فتح/إغلاق القائمة الجانبية */
+            button[data-testid="stSidebarCollapseButton"] {
+                visibility: visible !important;
+                display: block !important;
+                z-index: 999999 !important;
+            }
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
@@ -56,8 +69,8 @@ def load_data():
                 "img": "https://via.placeholder.com/150",
             },
             "رياضيات": {
-                "price": 800,
-                "old_price": 950,
+                "price": 00,
+                "old_price": 0,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
             },
@@ -206,7 +219,7 @@ elif st.session_state.page == "checkout":
             try:
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                    data={"chat_id": CHAT_ID, "text": msg},
+                    data={"chat_id":7055252264 , "text": msg},
                 )
             except Exception:
                 pass
