@@ -159,7 +159,7 @@ if st.session_state.page == "shop":
 
 # --- واجهة تأكيد الطلب ---
 elif st.session_state.page == "checkout":
-    st.title("📄 تأكيد الطلب")
+    st.title(" تأكيد الطلب")
 
     # حساب المجموع الأساسي للمنتجات
     base_total = sum(
@@ -226,7 +226,7 @@ elif st.session_state.page == "checkout":
                 st.balloons()
                 st.success("تم تأكيد طلبك بنجاح!")
                 st.markdown("---")
-                st.markdown("### 📄 فاتورة الطلب:")
+                st.markdown("###  فاتورة الطلب:")
                 st.markdown(f"**👤 الاسم:** {name}")
                 st.markdown(f"**📞 الهاتف:** {phone}")
                 st.markdown(f"**📍 الولاية:** {wilaya}")
