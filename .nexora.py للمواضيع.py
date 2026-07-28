@@ -15,12 +15,12 @@ def load_data():
         with open(DATA_FILE, "r") as f: return json.load(f)
     # الهيكل المحدث لجميع المواد
     return {"products": {
-        "علوم 1": {"price": 500, "old_price": 700, "available": True, "img": "https://via.placeholder.com/150"},
-        "علوم 2": {"price": 600, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"},
-        "علوم 3": {"price": 550, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"},
-        "رياضيات": {"price": 800, "old_price": 950, "available": True, "img": "https://via.placeholder.com/150"},
-        "فيزياء": {"price": 750, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"},
-        "إسلامية": {"price": 400, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"}
+        "علوم 1": {"price": 00, "old_price": 00, "available": True, "img": "https://via.placeholder.com/150"},
+        "علوم 2": {"price": 00, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"},
+        "علوم 3": {"price": 0, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"},
+        "رياضيات": {"price": 00, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"},
+        "فيزياء": {"price": 0, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"},
+        "إسلامية": {"price": 00, "old_price": 0, "available": True, "img": "https://via.placeholder.com/150"}
     }}
 
 def save_data(data):
