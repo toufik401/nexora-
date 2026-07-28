@@ -51,7 +51,7 @@ def load_data():
     return {
         "products": {
             "علوم 1": {
-                "price": 00,
+                "price":00,
                 "old_price": 00,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
@@ -63,7 +63,7 @@ def load_data():
                 "img": "https://via.placeholder.com/150",
             },
             "علوم 3": {
-                "price": 0,
+                "price": 550,
                 "old_price": 0,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
@@ -81,7 +81,7 @@ def load_data():
                 "img": "https://via.placeholder.com/150",
             },
             "إسلامية": {
-                "price": 00,
+                "price":00,
                 "old_price": 0,
                 "available": True,
                 "img": "https://via.placeholder.com/150",
@@ -102,7 +102,7 @@ if "cart" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "shop"
 
-# --- 3. لوحة التحكم المشفرة (تظهر في القائمة الجانبية) ---
+# --- 3. لوحة التحكم المشفرة ---
 with st.sidebar:
     st.header("🔐 دخول الأدمن")
     admin_password = st.text_input("كلمة السر", type="password")
@@ -189,7 +189,7 @@ if st.session_state.page == "shop":
             st.session_state.page = "checkout"
             st.rerun()
 
-# --- 5. واجهة تأكيد الطلب ---
+# --- 5. واجهة تأكيد الطلب مع شرط التحقق من الخانات ---
 elif st.session_state.page == "checkout":
     st.title("📄 تأكيد الطلب")
     total = sum(
@@ -204,37 +204,43 @@ elif st.session_state.page == "checkout":
 
     address = ""
     if "توصيل" in delivery:
-        address = st.text_input(" عنوان المنزل بالتفصيل في حال توصيل للمنزل *")
+        address = st.text_input("عنوان المنزل بالتفصيل *")
         total += 100
 
     with st.form("order_form"):
-        name = st.text_input("الاسم ")
-        phone = st.text_input("رقم الهاتف")
+        name = st.text_input("الاسم واللقب *")
+        phone = st.text_input("رقم الهاتف *")
         wilaya = st.selectbox("الولاية", ["أفلّو"])
 
         submitted = st.form_submit_button("تأكيد الطلب النهائي")
 
         if submitted:
-            msg = f"🔔 طلب جديد:\nالاسم: {name}\nالهاتف: {phone}\nالولاية: {wilaya}\nالعنوان: {address}\nالكتب: {st.session_state.cart}\nالمجموع: {total} دج"
-            try:
-                requests.post(
-                    f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                    data={"chat_id":7055252264 , "text": msg},
-                )
-            except Exception:
-                pass
+            # التحقق من إدخال البيانات
+            if not name.strip() or not phone.strip():
+                st.error("⚠️ يرجى كتابة الاسم ورقم الهاتف لإتمام الطلب!")
+            elif "توصيل" in delivery and not address.strip():
+                st.error("⚠️ يرجى كتابة عنوان المنزل بالتفصيل عند اختيار التوصيل!")
+            else:
+                msg = f"🔔 طلب جديد:\nالاسم: {name}\nالهاتف: {phone}\nالولاية: {wilaya}\nالعنوان: {address if address else 'استلام فردي'}\nالكتب: {st.session_state.cart}\nالمجموع: {total} دج"
+                try:
+                    requests.post(
+                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                        data={"chat_id": CHAT_ID, "text": msg},
+                    )
+                except Exception:
+                    pass
 
-            st.balloons()
-            st.success("تم تأكيد طلبك!")
-            st.markdown("---")
-            st.markdown("### 📄 فاتورة الطلب:")
-            st.markdown(f"**👤 الاسم:** {name}")
-            st.markdown(f"**📞 الهاتف:** {phone}")
-            st.markdown(f"**📍 الولاية:** {wilaya}")
-            if address:
-                st.markdown(f"**🏠 العنوان:** {address}")
-            st.markdown(f"**💰 المبلغ الإجمالي:** {total} دج")
-            st.session_state.cart = {}
+                st.balloons()
+                st.success("تم تأكيد طلبك بنجاح!")
+                st.markdown("---")
+                st.markdown("### 📄 فاتورة الطلب:")
+                st.markdown(f"**👤 الاسم:** {name}")
+                st.markdown(f"**📞 الهاتف:** {phone}")
+                st.markdown(f"**📍 الولاية:** {wilaya}")
+                if address:
+                    st.markdown(f"**🏠 العنوان:** {address}")
+                st.markdown(f"**💰 المبلغ الإجمالي:** {total} دج")
+                st.session_state.cart = {}
 
     if st.button("العودة للمتجر"):
         st.session_state.page = "shop"
